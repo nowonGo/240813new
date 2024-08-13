@@ -11,7 +11,7 @@ import settings
 #load_dotenv()
 
 # python -m streamlit run main.py
-st.title("📝new GPT")
+st.title("📝new GPT")
 
 config = settings.load_config()
 if "api_key" in config:
