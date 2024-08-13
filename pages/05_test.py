@@ -1,3 +1,5 @@
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
 
 st.title("Glowscript 임베드하기 🌐")
@@ -26,6 +28,34 @@ with st.sidebar:
     update_btn = st.button("설정 업데이트")
 
 
-# Glowscript 사이트를 iframe으로 임베드
-glowscript_url = "https://glowscript.org/"
-st.components.v1.iframe(glowscript_url, width=800, height=600)
+
+
+# Google Sheets API 설정
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("path_to_your_credentials.json", scope)
+client = gspread.authorize(creds)
+
+# Google 스프레드시트 열기
+spreadsheet = client.open("스프레드시트 이름")
+sheet = spreadsheet.sheet1  # 첫 번째 시트를 선택합니다.
+
+# 데이터 가져오기
+data = sheet.get_all_records()
+
+# Streamlit UI 구성
+st.title("학생 제출 URL 목록")
+
+# 데이터 출력
+if data:
+    st.write("제출된 학생 목록:")
+    for entry in data:
+        학번 = entry.get("학번")
+        이름 = entry.get("이름")
+        url = entry.get("url")
+
+        # 학생 정보 출력
+        st.write(f"학번: {학번}, 이름: {이름}")
+        st.markdown(f"[제출한 링크]({url})")
+else:
+    st.write("제출된 데이터가 없습니다.")
+
